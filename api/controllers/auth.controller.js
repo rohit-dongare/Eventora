@@ -1,4 +1,5 @@
 import User from '../models/user.model.js';
+import brcyptjs from 'bcryptjs';
 
 export const signup = async (req, res) => {
     const { username, email, password } = req.body;
@@ -9,11 +10,13 @@ export const signup = async (req, res) => {
         });
     }
 
+    const hashedPassword = brcyptjs.hashSync(password, 10);//also you can do this using await
+
     //creating a new user
     const newUser = new User({
         username,
         email,
-        password
+        password: hashedPassword
     });
 
 
