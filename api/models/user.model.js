@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-}, {timeStamps: true}
+}, {timestamps: true}
 );
 
 //User is the name of the model, it will automatically named as Users in database
