@@ -9,7 +9,7 @@ export const signup = async (req, res, next) => {
         !password || username === "" || 
         email === "" || password === ""
     ){
-        next(errorHandler(400, 'All fields are required!'));//custome error handling
+        next(errorHandler(400, 'All fields are required to be filled!'));//custome error handling
         //first the call go to the custome error handling function where we return the error and that error is then 
         //passed to the error handling middleware in index.js file using next() keyword
     }
