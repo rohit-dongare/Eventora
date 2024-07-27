@@ -1,6 +1,7 @@
 import User from '../models/user.model.js';
 import brcyptjs from 'bcryptjs';
 import { errorHandler } from '../utils/error.js';
+import jwt from 'jsonwebtoken';
 
 export const signup = async (req, res, next) => {
     const { username, email, password } = req.body;
@@ -9,7 +10,7 @@ export const signup = async (req, res, next) => {
         !password || username === "" || 
         email === "" || password === ""
     ){
-        next(errorHandler(400, 'All fields are required to be filled!'));//custome error handling
+       return next(errorHandler(400, 'All fields are required to be filled!'));//custome error handling
         //first the call go to the custome error handling function where we return the error and that error is then 
         //passed to the error handling middleware in index.js file using next() keyword
     }
@@ -29,8 +30,50 @@ export const signup = async (req, res, next) => {
         res.json("Signup successful!");
 
     } catch (error) {
-        next(error);
+       return next(error);
     }//this next will lead to the custome error handling middleware in index.js file
 
+}
+
+
+//login
+export const signin = async (req, res, next) => {
+    const { email, password } = req.body;
+
+    if(!email || !password || email === "" || password === ""){
+       return next(errorHandler(400, 'All fields are required to be filled!'));//custome error handling
+    }
+
+    try {
+        const validUser = await User.findOne({ email });
+
+        if(!validUser){
+           return next(errorHandler(404, 'User not found!'));//custome error handling
+        }
+
+        const validPassword = brcyptjs.compareSync(password, validUser.password);
+ 
+        if(!validPassword){
+           return next(errorHandler(400, 'Invalid credentials!'));//custome error handling
+        }
+
+        const token = jwt.sign(
+            { id: validUser._id },
+            process.env.JWT_SECRET    
+        )
+
+        //it separates password and other fields as we don't want to send back the password to the user
+        const { password: pass, ...rest} = validUser._doc;
+
+        //send the cookie to the user 
+        //name of the cookie is access_token
+        //this cookie is nothing but the encrypted id of user's id
+        res.status(200).cookie('access_token', token, 
+            { httpOnly: true}).json(rest);//in response we will send the details of authenticated user
+            //that data will be stored into redux for global state management
+
+    } catch (error) {
+       return next(error);
+    }
 
 }
