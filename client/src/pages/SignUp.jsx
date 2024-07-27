@@ -94,7 +94,7 @@ const SignUp = () => {
                 onChange={handleChange}
               />
             </div>
-            <Button className={`${loading ? 'backdrop-blur-0' : ''} bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 font-bold text-white rounded-lg hover:bg-gradient-to-l`} disabled={loading} type='submit'>
+            <Button className={`${loading ? 'blur-[2px]' : ''} bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 font-bold text-white rounded-lg hover:bg-gradient-to-l`} disabled={loading} type='submit'>
               {loading ? (
                 <>
                   <Spinner size='sm' className='w-[18px]' />
