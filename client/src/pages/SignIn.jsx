@@ -1,13 +1,15 @@
 import { Label, TextInput, Button, Alert, Spinner } from 'flowbite-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { signInStart, signInSuccess, signInFailure } from '../redux/user/userSlice';
 
 const SignIn = () => {
   const [formData, setFormData] = useState({});
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const { loading, error: errorMessage } = useSelector((state) => state.user);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
@@ -17,12 +19,12 @@ const SignIn = () => {
     e.preventDefault();
 
     if (!formData.email || !formData.password) {
-      return setErrorMessage('Please fill in all fields');
+      return dispatch(signInFailure('Please fill up all the fields!'));
     }
 
     try {
-      setLoading(true);
-      setErrorMessage(null);
+      dispatch(signInStart());
+
       const res = await fetch('/api/auth/signin', {
         method: 'POST',
         headers: {
@@ -33,21 +35,14 @@ const SignIn = () => {
 
       const data = await res.json();
 
-      if (data.success === false) {
-        return setErrorMessage(data.message);
-      }
-
-      setLoading(false);
-
-      if(res.ok){
+      if (!res.ok) {
+        dispatch(signInFailure(data.message));
+      } else {
+        dispatch(signInSuccess(data));
         navigate('/');
       }
-
     } catch (error) {
-      setErrorMessage(error.message);
-      setLoading(false);
-    } finally{
-      setLoading(false);
+      dispatch(signInFailure(error.message));
     }
   };
 
@@ -85,13 +80,20 @@ const SignIn = () => {
                 onChange={handleChange}
               />
             </div>
-            <Button className={`${loading ? 'blur-[2px]' : ''} bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 font-bold text-white rounded-lg hover:bg-gradient-to-l`} disabled={loading} type='submit'>
+            <Button
+              className={`bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 font-bold text-white rounded-lg hover:bg-gradient-to-l 
+                ${loading ? 'blur-sm' : ''}`}
+              disabled={loading}
+              type='submit'
+            >
               {loading ? (
                 <>
                   <Spinner size='sm' className='w-[18px]' />
                   <span className='pl-3'>Loading...</span>
                 </>
-              ) : 'Sign In'}
+              ) : (
+                'Sign In'
+              )}
             </Button>
           </form>
           <div className='flex gap-2 text-sm mt-4'>
@@ -102,7 +104,7 @@ const SignIn = () => {
           </div>
           {errorMessage && (
             <Alert className='mt-5 bg-red-200 text-red-600 h-auto rounded-none py-3 px-2 font-semibold'>
-              {errorMessage}
+              <span className="font-medium">{errorMessage}</span>
             </Alert>
           )}
         </div>
