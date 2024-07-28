@@ -5,7 +5,7 @@ import { BsFacebook,BsInstagram, BsTwitter,BsGithub, BsDribbble   } from 'react-
 
 const FooterComponent = () => {
   return (
-    <Footer container className='border border-t-8 px-3 py-4 border-teal-500'>
+    <Footer container className='border border-t-8 px-3 py-4 border-teal-500 dark:text-white dark:bg-[rgba(49,65,110,0.66)]'>
         <div className='w-full max-w-7xl mx-auto'>
             <div className="grid w-full justify-between sm:flex md:grid-cols-1">
                 <div className='mb-3 mt-5'>
@@ -51,17 +51,17 @@ const FooterComponent = () => {
             <Footer.Divider className='mt-3 mb-3 border-black'/>
             <div className='w-full sm:flex sm:items-center sm:justify-between'>
                 <Footer.Copyright
-                  className='text-gray-900 hover:text-sky-500'
+                  className='text-gray-900 dark:text-white dark:hover:hover:text-sky-500 hover:text-sky-500'
                   href='#'
                   by=" IdeaFusion's blog"
                   year={new Date().getFullYear()}
                 />
                 <div className='flex gap-6 sm:mt-0 mt-4 sm:justify-center'>
-                    <Footer.Icon href='#' icon={BsFacebook} />
-                    <Footer.Icon href='#' icon={BsInstagram} />
-                    <Footer.Icon href='#' icon={BsTwitter} />
-                    <Footer.Icon href='https://www.github.com/rohit-dongare' icon={BsGithub} />
-                    <Footer.Icon href='#' icon={BsDribbble} />
+                    <Footer.Icon href='#' icon={BsFacebook} className='dark:text-white dark:hover:hover:text-sky-500'/>
+                    <Footer.Icon href='#' icon={BsInstagram} className='dark:text-white dark:hover:hover:text-sky-500'/>
+                    <Footer.Icon href='#' icon={BsTwitter} className='dark:text-white dark:hover:hover:text-sky-500'/>
+                    <Footer.Icon href='https://www.github.com/rohit-dongare' icon={BsGithub} className='dark:text-white dark:hover:hover:text-sky-500' />
+                    <Footer.Icon href='#' icon={BsDribbble} className='dark:text-white dark:hover:hover:text-sky-500' />
                 </div>
             </div>
         </div>

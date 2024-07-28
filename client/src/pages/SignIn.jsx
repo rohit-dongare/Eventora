@@ -48,7 +48,7 @@ const SignIn = () => {
   };
 
   return (
-    <div className='min-h-screen mt-20'>
+    <div className='min-h-screen mt-20 dark:bg-gray-900'>
       <div className='flex gap-5 p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center'>
         <div className='flex-1'>
           <Link to='/' className="font-bold dark:text-white text-4xl">
@@ -57,28 +57,30 @@ const SignIn = () => {
             </span>
             Blog
           </Link>
-          <p className='text-lg mt-5'>
+          <p className='text-lg mt-5 dark:text-gray-300'>
             This is a sample blog. You can sign in with your email and password or with Google.
           </p>
         </div>
         <div className='flex-1'>
           <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
             <div>
-              <Label value='Your email' />
+              <Label value='Your email' className='dark:text-gray-300' />
               <TextInput
                 type='email'
                 placeholder='name@company.com'
                 id='email'
                 onChange={handleChange}
+                className='dark:bg-gray-800 dark:text-white'
               />
             </div>
             <div>
-              <Label value='Your password' />
+              <Label value='Your password' className='dark:text-gray-300' />
               <TextInput
                 type='password'
                 placeholder='**********'
                 id='password'
                 onChange={handleChange}
+                className='dark:bg-gray-800 dark:text-white'
               />
             </div>
             <Button
@@ -96,16 +98,16 @@ const SignIn = () => {
                 'Sign In'
               )}
             </Button>
-            <OAuth/>
+            <OAuth />
           </form>
-          <div className='flex gap-2 text-sm mt-4'>
+          <div className='flex gap-2 text-sm mt-4 dark:text-gray-300'>
             <span>Don't have an account?</span>
-            <Link to='/sign-up' className='text-blue-700 hover:text-blue-800 font-semibold'>
+            <Link to='/sign-up' className='text-blue-700 hover:text-blue-800 font-semibold dark:text-blue-400 dark:hover:text-blue-500'>
               Sign Up
             </Link>
           </div>
           {errorMessage && (
-            <Alert className='mt-5 bg-red-200 text-red-600 h-auto rounded-none py-3 px-2 font-semibold'>
+            <Alert className='mt-5 bg-red-200 dark:bg-red-600 text-red-600 dark:text-red-200 h-auto rounded-none py-3 px-2 font-semibold'>
               <span className="font-medium">{errorMessage}</span>
             </Alert>
           )}

@@ -55,7 +55,7 @@ const OAuth = () => {
     className="relative  inline-block p-[2px] bg-gradient-to-r from-pink-500 to-orange-500 rounded-lg">
       <button
         type="button"
-        className=" flex justify-center
+        className=" flex justify-center dark:bg-transparent
           bg-white text-black rounded-lg px-4 py-2 w-full h-full 
           transition-all duration-300
           border-2 border-transparent bg-clip-padding
