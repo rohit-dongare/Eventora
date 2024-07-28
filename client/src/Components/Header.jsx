@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { TextInput, Button, Navbar } from 'flowbite-react';
+import { TextInput, Button, Navbar, Dropdown, Avatar } from 'flowbite-react';
 import { Link } from 'react-router-dom';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { VscChromeClose } from "react-icons/vsc";
 import { useLocation } from 'react-router-dom';
 import { FaMoon } from 'react-icons/fa';
 import { SlMenu } from "react-icons/sl";
+import { useSelector } from 'react-redux';
+import { IoIosLogOut } from "react-icons/io";
 
 const Header = () => {
 
   const [mobileMenu, setMobileMenu] = useState(false);
   const location = useLocation();
   const path = useLocation().pathname;
+
+  const currentUser = useSelector((state) => state.user);
+ // console.log(currentUser);
 
   useEffect(() => {
     setMobileMenu(false);
@@ -61,14 +66,42 @@ const Header = () => {
         <Button className='w-12 h-10 hidden sm:flex items-center justify-center' color='gray' pill>
           <FaMoon />
         </Button>
-        <Link to='/sign-in'>
-          <Button className='p-1 h-10 hidden sm:flex items-center justify-center 
-          bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 font-bold text-white rounded-lg
-          hover:bg-gradient-to-l
-          '>
-            Sign in
-          </Button>
-        </Link>
+        {
+          currentUser.currentUser ? (
+            <Dropdown
+            arrowIcon={false}
+            inline
+            label={
+              <Avatar
+              alt='user'
+              img={currentUser.currentUser.profilePicture}
+              rounded
+              className='h-auto'
+              />
+            }
+            >
+             <Dropdown.Header>
+               <span className='block text-sm '>{currentUser.currentUser.username}</span>
+               <span className='block text-sm font-medium truncate'>{currentUser.currentUser.email}</span>
+             </Dropdown.Header> 
+             <Link to={'/dashboard?tab=profile'}>
+               <Dropdown.Item className='hover:bg-sky-200 font-semibold'>Profile</Dropdown.Item>
+             </Link>
+             <Dropdown.Divider className='border-black' />
+             <Dropdown.Item className='hover:bg-sky-200 font-semibold'>Sign out <IoIosLogOut className='w-6 h-6 pl-1 font-semibold' /></Dropdown.Item>
+            </Dropdown>
+          ) : 
+          (
+            <Link to='/sign-in'>
+            <Button className='p-1 h-10 hidden sm:flex items-center justify-center 
+            bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 font-bold text-white rounded-lg
+            hover:bg-gradient-to-l
+            '>
+              Sign in
+            </Button>
+           </Link>
+         )
+        }
         {
           mobileMenu ? <VscChromeClose
           onClick={closeMobileMenu}

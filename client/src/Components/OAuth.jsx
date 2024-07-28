@@ -23,7 +23,7 @@ const OAuth = () => {
 
             try {
                 const resultsFromGoogle = await signInWithPopup(auth, provider);
-               // console.log(resultsFromGoogle);, it has all the data of signed in user, i.e email id, profile photo etc
+               // console.log(resultsFromGoogle.user.photoURL);// it has all the data of signed in user, i.e email id, profile photo etc
                //here we send that data to the backend
                const res = await fetch('/api/auth/google', {
                 method: 'POST',
