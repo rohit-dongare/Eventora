@@ -52,7 +52,7 @@ const Header = () => {
         <TextInput
           type='text'
           placeholder='Search...'
-          className='pl-3 dark:bg-gray-800 dark:text-white'
+          className=' dark:bg-gray-800 dark:text-white'
           style={{ paddingRight: '2.5rem' }}
         />
         <AiOutlineSearch className="absolute left-48 text-gray-500 dark:text-gray-300 text-2xl" />
@@ -61,7 +61,7 @@ const Header = () => {
         <AiOutlineSearch className='text-2xl' />
       </Button>
       <div className='flex items-center gap-4 md:order-2'>
-        <Button className='w-12 h-10 hidden sm:flex items-center justify-center dark:bg-gray-500 dark:text-white' color='gray' pill onClick={() => dispatch(toggleTheme())}>
+        <Button className='w-12 h-10 flex items-center justify-center dark:bg-gray-500 dark:text-white' color='gray' pill onClick={() => dispatch(toggleTheme())}>
           {theme === 'light' ? <FaSun /> : <FaMoon />}
         </Button>
         {currentUser.currentUser ? (
