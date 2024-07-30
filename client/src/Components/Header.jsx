@@ -52,7 +52,7 @@ const Header = () => {
         <TextInput
           type='text'
           placeholder='Search...'
-          className=' dark:bg-gray-800 dark:text-white'
+          className='-3 dark:bg-gray-800 dark:text-white'
           style={{ paddingRight: '2.5rem' }}
         />
         <AiOutlineSearch className="absolute left-48 text-gray-500 dark:text-gray-300 text-2xl" />
@@ -86,7 +86,7 @@ const Header = () => {
         {mobileMenu ? (
           <VscChromeClose onClick={closeMobileMenu} className='w-[30px] h-[30px] cursor-pointer p-1 lg:hidden transition-transform duration-200 ease' />
         ) : (
-          <SlMenu onClick={openMobileMenu} className='w-[30px] h-[30px] cursor-pointer lg:hidden transition-transform duration-200 ease bg-sky-100 dark:bg-gray-600' />
+          <SlMenu onClick={openMobileMenu} className='w-[30px] h-[30px] cursor-pointer lg:hidden transition-transform duration-200 ease' />
         )}
       </div>
 
