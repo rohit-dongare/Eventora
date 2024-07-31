@@ -1,9 +1,12 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';//this is used to extract the cookie of the user from the browser if he is authenticated, 
+//go through verifyUser.js file,
 
 import userRoutes from './routes/user.route.js';
 import authRoutes from './routes/auth.route.js';
+
 
 dotenv.config();
 
@@ -18,12 +21,13 @@ mongoose
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
 });
 
-app.use('/api', userRoutes);
+app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
 
 //error handling middleware
