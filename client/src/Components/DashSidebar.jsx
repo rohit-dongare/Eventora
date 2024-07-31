@@ -21,13 +21,15 @@ const DashSidebar = () => {
             <Sidebar.Items>
                 <Sidebar.ItemGroup>
                     <Link to='/dashboard?tab=profile'>
-                        <Sidebar.Item 
+                    <Sidebar.Item 
                             icon={HiUser} 
+                            label={'User'}
                             className={`w-full h-10 pr-2 py-2 mb-2 hover:bg-gray-200 ${tab === 'profile' ? 'bg-gray-200' : ''}`}
                             active={tab === 'profile'}
-                        >
-                            Profile
-                        </Sidebar.Item>
+                            as='div'
+                    >
+                        Profile
+                    </Sidebar.Item>
                     </Link>
                     <Sidebar.Item 
                         icon={HiArrowSmRight} 
