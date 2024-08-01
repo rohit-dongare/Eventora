@@ -67,3 +67,21 @@ export const updateUser = async (req, res, next) => {
         return next(error);
     }
 };
+
+
+//delete user
+export const deleteUser = async(req, res, next) => {
+    // req.user contains the id, we get it from the token (go through verifyUser.js)
+    // req.params.userId, we get it from the route (user.route.js)
+    if(req.user.id !== req.params.userId){
+        return next(errorHandler(403, 'You are not allowed to delete this user!'));
+    }
+
+    try {
+        await User.findByIdAndDelete(req.params.userId);
+
+        res.status(200).json('User has been deleted');
+    } catch (error) {
+        return next(error);
+    }
+}
