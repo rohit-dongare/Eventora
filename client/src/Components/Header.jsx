@@ -9,6 +9,7 @@ import { SlMenu } from "react-icons/sl";
 import { useSelector, useDispatch } from 'react-redux';
 import { IoIosLogOut } from "react-icons/io";
 import { toggleTheme } from '../redux/theme/themeSlice';
+import { signoutSuccess } from '../redux/user/userSlice';
 
 const Header = () => {
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -39,6 +40,28 @@ const Header = () => {
   const isActive = (currentPath) => {
     return path === currentPath ? "text-sky-500 font-bold" : "hover:text-sky-500";
   };
+
+
+   //signout function
+const handleSignOut = async() => {
+  try {
+
+    const res = await fetch('/api/user/signout', {
+     method: 'POST'
+    });
+
+    const data = await res.json();
+
+    if(!res.ok){
+      console.log(data.message);
+    } else{
+      dispatch(signoutSuccess());
+    }
+
+  } catch (error) {
+    console.log(error.message);
+  }
+}
 
   return (
     <Navbar className={`flex items-center justify-between bg-white dark:bg-[rgba(49,65,110,0.66)] dark:text-gray-400 py-2 px-4 z-[2] relative ${mobileMenu ? '' : 'shadow-md'}`}>
@@ -74,7 +97,9 @@ const Header = () => {
               <Dropdown.Item className='hover:bg-sky-200 dark:hover:bg-sky-700 font-semibold'>Profile</Dropdown.Item>
             </Link>
             <Dropdown.Divider className='border-black dark:border-gray-700' />
-            <Dropdown.Item className='hover:bg-sky-200 dark:hover:bg-sky-700 font-semibold'>Sign out <IoIosLogOut className='w-6 h-6 pl-1 font-semibold' /></Dropdown.Item>
+            <Dropdown.Item 
+            onClick={handleSignOut}
+            className='hover:bg-sky-200 dark:hover:bg-sky-700 font-semibold'>Sign out <IoIosLogOut className='w-6 h-6 pl-1 font-semibold' /></Dropdown.Item>
           </Dropdown>
         ) : (
           <Link to='/sign-in'>
