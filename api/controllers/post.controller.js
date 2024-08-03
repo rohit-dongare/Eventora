@@ -35,3 +35,52 @@ export const create = async (req, res, next) => {
     }
 
 }
+
+
+//get posts
+export const getposts = async(req, res, next) => {
+    try {
+        //in order to show pagination to the user, we won't fetch all the posts at once
+        //instead we will give some limit e.g initially 9 posts will be fetched
+        //and when user click on the show more button , we will show next remaining posts after that
+        const startIndex = parseInt(req.query.startIndex) || 0;//e.g we want to start from 9 or 10
+        const limit = parseInt(req.query.limit) || 9;//we want to show 3 posts for each 3 rows , so total 9 posts at a time
+        const sortDirection = req.query.order === 'asc' ? 1 : -1;//we will sort posts in ascending or descending order based on the updated time of that post, when it was last updated
+        const posts = await Post.find({
+            ...(req.query.userId && { userId: req.query.userId }),
+            ...(req.query.category && { category: req.query.category }),
+            ...(req.query.slug && { slug: req.query.slug }),
+            ...(req.query.postId && { _id: req.query.postId }),
+            ...(req.query.searchTerm && { 
+                $or: [
+                    { title: { $regex: req.query.searchTerm, $options: 'i' } },
+                    { content: { $regex: req.query.searchTerm, $options: 'i' } },
+                ],
+             }),
+         }).sort({ updatedAt:sortDirection }).skip(startIndex).limit(limit);
+
+    const totalPosts = await Post.countDocuments();//this count will be visible on the dashboard of admin
+
+    const now = new Date();
+
+    //we want to  show posts that were created in last month to the dashboard of admin
+    const oneMonthAgo = new Date(
+        now.getFullYear(),
+        now.getMonth()-1,
+        now.getDate()
+    );
+
+    const lastMonthPosts = await Post.countDocuments({
+        createdAt: { $gte: oneMonthAgo },
+    });
+
+    res.status(200).json({
+        posts,
+        totalPosts,
+        lastMonthPosts
+    });
+
+    } catch (error) {
+        return next(error);
+    }
+}
