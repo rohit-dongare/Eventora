@@ -6,6 +6,7 @@ import {Link} from 'react-router-dom';
 const DashPosts = () => {
   const { currentUser } = useSelector((state) => state.user);
   const [userPosts, setUserPosts] = useState([]);
+  const [showMore, setShowMore]  = useState(true);
 
   useEffect(()=>{
     const fetchPosts = async()=>{
@@ -14,6 +15,11 @@ const DashPosts = () => {
         const data = await res.json();
         if(res.ok){
           setUserPosts(data.posts);
+          //at the backend in the posts.controller.js we have a limit of 9 posts fetching at a time
+          //and when you click on the show more button, you will see the remaining posts displayed on the page
+          if(data.posts.length < 9){
+            setShowMore(false);
+          }
         }
        // console.log(userPosts);
         
@@ -28,6 +34,25 @@ const DashPosts = () => {
     }
 
   },[currentUser._id]);
+
+
+  //show more posts
+  const handleShowMore = async() => {
+      const startIndex = userPosts.length;
+      try {
+        const res = await fetch(`/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`);
+        const data = await res.json();
+        if(res.ok){
+          setUserPosts((prev) => [...prev, ...data.posts])
+          if(data.posts.length < 9){
+            setShowMore(false);
+          }
+        }
+      } catch (error) {
+          console.log(error.message);
+          
+      }
+  }
 
   return (
     <div className="table-auto overflow-x-scroll md:mx-auto p-3
@@ -78,6 +103,12 @@ const DashPosts = () => {
               </Table.Body>
             ))}
           </Table>
+
+          {showMore && (
+            <button 
+            onClick={handleShowMore}
+            className="w-full hover:underline text-teal-500 self-center text-sm py-7">Show more</button>
+          )}
         </>
       ): 
       (

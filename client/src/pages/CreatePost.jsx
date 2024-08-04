@@ -108,6 +108,10 @@ const CreatePost = () => {
                     <option value="javascript">Javascript</option>
                     <option value="reactjs">React.js</option>
                     <option value="next.js">Next.js</option>
+                    <option value="nodejs">Node.js</option>
+                    <option value="python">Python</option>
+                    <option value="java">Java</option>
+                    <option value="tailwindcss">Tailwindcss</option>
                 </Select>
             </div>
             <div className='flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3'>
