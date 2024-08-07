@@ -61,8 +61,25 @@ const DashUsers = () => {
 
 
 //delete user
-const handleDeleteUser = () => {
+const handleDeleteUser = async() => {
+   try {
+    const res = await fetch(`/api/user/delete/${deleteUserId}`, {
+      method: 'DELETE'
+    });
 
+    const data = await res.json();
+
+    if(!res.ok){
+      console.log(data.message);
+    } else{
+       setUsers((users) => users.filter((user) => user._id !== deleteUserId));
+       setShowModal(false);
+    }
+
+   } catch (error) {
+     console.log(error.message);
+     return;
+   }
 }
 
   return (

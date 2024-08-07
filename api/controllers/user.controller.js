@@ -73,7 +73,7 @@ export const updateUser = async (req, res, next) => {
 export const deleteUser = async(req, res, next) => {
     // req.user contains the id, we get it from the token (go through verifyUser.js)
     // req.params.userId, we get it from the route (user.route.js)
-    if(req.user.id !== req.params.userId){
+    if(!req.user.isAdmin && req.user.id !== req.params.userId){
         return next(errorHandler(403, 'You are not allowed to delete this user!'));
     }
 
@@ -97,7 +97,7 @@ export const signout = (req, res, next) => {
 }
 
 
-//get users
+//get users, eg. for showing users to admin dashboard
 export const getUsers = async(req, res, next) => {
 
     if(!req.user.isAdmin){
@@ -145,3 +145,4 @@ export const getUsers = async(req, res, next) => {
         return next(error);
     }
 }
+
