@@ -1,4 +1,4 @@
-import { Alert, Button, FileInput, Select, TextInput } from 'flowbite-react';
+import { Alert, Button, FileInput, Select, TextInput, Spinner } from 'flowbite-react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import {
@@ -21,30 +21,37 @@ export default function UpdatePost() {
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
   const { postId } = useParams();
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [ loading, setLoading ] = useState(true);
 
   const navigate = useNavigate();
-    const { currentUser } = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user);
 
   useEffect(() => {
-    try {
-      const fetchPost = async () => {
+    const fetchPost = async () => {
+      try {
+        setLoading(true);
         const res = await fetch(`/api/post/getposts?postId=${postId}`);
         const data = await res.json();
         if (!res.ok) {
-          console.log(data.message);
+          setLoading(false);
           setPublishError(data.message);
           return;
         }
-        if (res.ok) {
+
+        if(res.ok){
+          setLoading(false);
           setPublishError(null);
           setFormData(data.posts[0]);
         }
-      };
+      } catch (error) {
+        setPublishError(true);
+        setLoading(false);
+        return;
+      }
+    };
 
-      fetchPost();
-    } catch (error) {
-      console.log(error.message);
-    }
+    fetchPost();
   }, [postId]);
 
   const handleUpdloadImage = async () => {
@@ -80,40 +87,41 @@ export default function UpdatePost() {
     } catch (error) {
       setImageUploadError('Image upload failed');
       setImageUploadProgress(null);
-     console.log(error);
+      console.log(error);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch(`/api/post/updatepost/${postId}/${currentUser._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setPublishError(data.message);
+        return;
+      }
+      setPublishError(null);
+      navigate(`/post/${data.slug}`);
+    } catch (error) {
+      setPublishError('Something went wrong!');
     }
   };
 
 
-  //update post
-  const handleSubmit = async(e) => {
-    e.preventDefault();
-
-    try {
-        const res = await fetch(`/api/post/updatepost/${postId}/${currentUser._id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        });
-
-        const data = await res.json();
-
-        if(!res.ok){
-            setPublishError(data.message);
-            return;
-        } 
-        if(res.ok){
-            setPublishError(null);
-            navigate(`/post/${data.slug}`);
-        }
-
-    } catch (error) {
-        setPublishError('Something went wrong!');
-    }
-}
- 
+  if(loading) return(
+    <div className="flex justify-center items-center min-h-screen">
+        <Spinner size="xl" />
+    </div>
+)
 
   return (
     <div className='p-3 max-w-3xl mx-auto min-h-screen'>
@@ -139,8 +147,12 @@ export default function UpdatePost() {
           >
             <option value='uncategorized'>Select a category</option>
             <option value='javascript'>JavaScript</option>
+            <option value='python'>Python</option>
+            <option value='java'>Java</option>
+            <option value="tailwindcss">Tailwindcss</option>
             <option value='reactjs'>React.js</option>
-            <option value='nextjs'>Next.js</option>
+            <option value='nodejs'>Node.js</option>
+            <option value='nextjs'>next.js</option>
           </Select>
         </div>
         <div className='flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3'>
@@ -172,14 +184,17 @@ export default function UpdatePost() {
         {imageUploadError && <Alert color='failure'>{imageUploadError}</Alert>}
         {formData.image && (
           <img
-            src={formData?.image}
+            src={formData && formData.image}
             alt='upload'
             className='w-full h-72 object-cover'
+            onLoad={() => setImageLoaded(true)}
+            onError={() => setImageLoaded(false)}
+            style={{ display: imageLoaded ? 'block' : 'none' }}
           />
         )}
         <ReactQuill
           theme='snow'
-          value={formData.content}
+          value={formData.content || ''}
           placeholder='Write something...'
           className='h-72 mb-12'
           required

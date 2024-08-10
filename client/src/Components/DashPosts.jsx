@@ -116,7 +116,7 @@ const handleDeletePost = async() => {
                     </Link>
                   </Table.Cell>
                   <Table.Cell>
-                      <Link className="font-medium text-gray-900 dark:text-white" to={`post/${post.slug}`}>
+                      <Link className="font-medium text-gray-900 dark:text-white" to={`/post/${post.slug}`}>
                         {post.title}
                       </Link>
                   </Table.Cell>
