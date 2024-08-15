@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {useSelector} from 'react-redux';
-import { Table, Button } from 'flowbite-react';
+import { Table, Button, Spinner } from 'flowbite-react';
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { Modal } from "flowbite-react";
 import { FaCheck, FaTimes } from "react-icons/fa";
@@ -11,14 +11,22 @@ const DashUsers = () => {
   const [showMore, setShowMore]  = useState(true);
   const [showModal, setShowModal] = useState(false);//it is useful when you want to delete a post then it will show a modal asking you if you want to delete the post
   const [deleteUserId, setDeleteUserId] = useState('');
+  const [ loading, setLoading ] = useState(true);
 
   useEffect(()=>{
     const fetchUsers = async()=>{
       try {
+        setLoading(true);
         //go through post.controller.js file in backend
         const res = await fetch(`/api/user/getusers`);
         const data = await res.json();
+
+        if(!res.ok){
+          setLoading(false);
+        }
+
         if(res.ok){
+          setLoading(false);
           setUsers(data.users);
           //at the backend in the posts.controller.js we have a limit of 9 posts fetching at a time
           //and when you click on the show more button, you will see the remaining posts displayed on the page
@@ -26,9 +34,11 @@ const DashUsers = () => {
             setShowMore(false);
           }
         }
+
        // console.log(userPosts);
         
       } catch (error) {
+        setLoading(false);
         console.log(error.message);
         
       }
@@ -81,6 +91,13 @@ const handleDeleteUser = async() => {
      return;
    }
 }
+
+
+if(loading) return(
+  <div className="w-full flex justify-center items-center min-h-screen">
+      <Spinner size="xl" />
+  </div>
+)
 
   return (
     <div className="table-auto overflow-x-scroll md:mx-auto p-3
