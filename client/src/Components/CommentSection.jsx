@@ -1,7 +1,7 @@
 import {useSelector} from 'react-redux';
 import { useState, useEffect } from 'react';
 import { Alert, Button, Textarea} from 'flowbite-react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Comment from './Comment'; 
 
 
@@ -13,8 +13,10 @@ const CommentSection = ({ postId }) => {
     const [commentError, setCommentError] = useState(null);
     const [comments, setComments] = useState([]);//for displaying the comments of this post when we get them from the api route
    // console.log(comments);
-    
 
+   const navigate = useNavigate();//this is for the user if he wants to like the comment but
+   //he is not authenticated then we will navigate him to the sign-in page and after sign in he can like the comments
+    
     //submit the comment
     const handleSubmit = async(e) => {
         e.preventDefault();
@@ -64,7 +66,7 @@ const CommentSection = ({ postId }) => {
                 const data = await res.json();
 
             if(!res.ok){
-                console.log(data.message);
+               // console.log(data.message);
                 return;
             }
 
@@ -80,6 +82,43 @@ const CommentSection = ({ postId }) => {
         getComments();
 
     }, [postId]);
+
+
+    //like comment or dislike
+    const handleLike = async(commentId) => {
+        try {
+            //this is for the user if he wants to like the comment but
+   //he is not authenticated then we will navigate him to the sign-in page and after sign in he can like the comments
+            if(!currentUser){ 
+                navigate('/sign-in');
+                return;
+            } 
+
+            const res = await fetch(`/api/comment/likeComment/${commentId}`, {
+                method: 'PUT'
+            });
+
+            if(res.ok){
+                const data = await res.json();
+
+                setComments(
+                 comments.map((comment) => 
+                    comment._id === commentId 
+                 ?  {
+                        ...comment,
+                        likes: data.likes,
+                        numberOfLikes: data.numberOfLikes
+                    }
+                    :
+                    comment
+                ));
+            }    
+
+        } catch (error) {
+            console.log(error.message);
+            return;
+        }
+    }
 
 
   return (
@@ -152,6 +191,7 @@ const CommentSection = ({ postId }) => {
                         <Comment
                           key={comment._id}
                           comment={comment}
+                          onLike={handleLike}
                         />
                     ) )
                 }

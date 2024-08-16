@@ -1,4 +1,5 @@
 import Comment from "../models/comment.model.js";
+import {errorHandler} from "../utils/error.js";
 
 export const createComment = async(req, res, next) => {
     try {
@@ -23,7 +24,7 @@ export const createComment = async(req, res, next) => {
     }
 }
 
-
+//for showing the individual posts comments
 export const getPostComments = async(req, res, next) => {
      try {
         const comments = await Comment.find({ postId: req.params.postId }).sort({
@@ -35,4 +36,34 @@ export const getPostComments = async(req, res, next) => {
      } catch (error) {
         return next(error);
      }
+}
+
+//like comment 
+export const likeComment = async(req, res, next) => {
+    try {
+        const comment = await Comment.findById(req.params.commentId);
+        if(!comment){
+            return next(errorHandler(404, 'Comment not found!'));
+        }
+
+        const userIndex = comment.likes.indexOf(req.user.id);
+
+        if(userIndex === -1){
+            comment.numberOfLikes += 1;
+            comment.likes.push(req.user.id);
+        } else {
+            //this means the user already liked the comment, we need to remove the like
+            //1 means remove content i.e userid in this case from the array index
+            
+            comment.numberOfLikes -= 1;
+            comment.likes.splice(userIndex, 1);
+        }
+
+        await comment.save();
+
+        res.status(200).json(comment);
+
+    } catch (error) {
+        return next(error);
+    }
 }

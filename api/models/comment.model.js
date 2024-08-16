@@ -13,11 +13,11 @@ const commentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    likes: {
+    likes: {//this likes array contains user id's who liked the comment
         type: Array,
         default: []
     },
-    numerOfLikes: {
+    numberOfLikes: {
         type: Number,
         default: 0
     },
