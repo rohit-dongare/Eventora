@@ -84,7 +84,7 @@ const CommentSection = ({ postId }) => {
     }, [postId]);
 
 
-    //like comment or dislike
+    //like comment or dislike, this function will be called from Comment.jsx component
     const handleLike = async(commentId) => {
         try {
             //this is for the user if he wants to like the comment but
@@ -118,6 +118,20 @@ const CommentSection = ({ postId }) => {
             console.log(error.message);
             return;
         }
+    }
+
+    //edit comment, this function will be called from Comment.jsx component
+    const handleEdit = (comment, editedContent) => {
+        setComments(
+            comments.map((c) => 
+                c._id === comment._id ?
+                {
+                    ...c,
+                    content: editedContent
+                } :
+                c
+            )
+        )
     }
 
 
@@ -192,6 +206,7 @@ const CommentSection = ({ postId }) => {
                           key={comment._id}
                           comment={comment}
                           onLike={handleLike}
+                          onEdit={handleEdit}
                         />
                     ) )
                 }
