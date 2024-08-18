@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Sidebar } from "flowbite-react";
-import { HiArrowSmRight, HiDocumentText, HiOutlineUserGroup, HiUser } from 'react-icons/hi';
+import { HiAnnotation, HiArrowSmRight, HiDocumentText, HiOutlineUserGroup, HiUser } from 'react-icons/hi';
 import { Link, useLocation } from "react-router-dom";
 import { signoutSuccess } from "../redux/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -77,17 +77,31 @@ const handleSignOut = async() => {
                     }
                     { currentUser.isAdmin && 
                         (
-                        <Link 
-                        to='/dashboard?tab=users'
-                        as='div'
-                        >
-                            <Sidebar.Item
-                            active={tab === 'users'}
-                            icon={HiOutlineUserGroup}
-                            >
-                                Users
-                            </Sidebar.Item>
-                        </Link>
+                            <>
+                                <Link 
+                                to='/dashboard?tab=users'
+                                as='div'
+                                >
+                                    <Sidebar.Item
+                                    active={tab === 'users'}
+                                    icon={HiOutlineUserGroup}
+                                    >
+                                        Users
+                                    </Sidebar.Item>
+                                </Link>
+                                <Link 
+                                to='/dashboard?tab=comments'
+                                as='div'
+                                >
+                                    <Sidebar.Item
+                                    active={tab === 'comments'}
+                                    icon={HiAnnotation}
+                                    >
+                                        Comments
+                                    </Sidebar.Item>
+                                </Link>
+                            </>
+                       
                         )
                     }
                     <Sidebar.Item 
