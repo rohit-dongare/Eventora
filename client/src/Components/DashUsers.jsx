@@ -11,7 +11,7 @@ const DashUsers = () => {
   const [showMore, setShowMore]  = useState(true);
   const [showModal, setShowModal] = useState(false);//it is useful when you want to delete a post then it will show a modal asking you if you want to delete the post
   const [deleteUserId, setDeleteUserId] = useState('');
-  const [ loading, setLoading ] = useState(true);
+  const [ loading, setLoading ] = useState(false);
 
   useEffect(()=>{
     const fetchUsers = async()=>{

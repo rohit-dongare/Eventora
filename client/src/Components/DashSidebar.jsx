@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Sidebar } from "flowbite-react";
-import { HiAnnotation, HiArrowSmRight, HiDocumentText, HiOutlineUserGroup, HiUser } from 'react-icons/hi';
+import { HiAnnotation, HiArrowSmRight, HiChartPie, HiDocumentText, HiOutlineUserGroup, HiUser } from 'react-icons/hi';
 import { Link, useLocation } from "react-router-dom";
 import { signoutSuccess } from "../redux/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -47,8 +47,23 @@ const handleSignOut = async() => {
 
     return (
         <Sidebar aria-label="Default sidebar example" className="w-full md:w-56 bg-gray-50 text-gray-900">
-            <Sidebar.Items>
+            <Sidebar.Items>            
                 <Sidebar.ItemGroup className="flex flex-col gap-1">
+                { currentUser && currentUser.isAdmin && 
+                        (
+                        <Link 
+                        to='/dashboard?tab=dash'
+                        >
+                            <Sidebar.Item
+                            active={tab === 'dash' || !tab}
+                            icon={HiChartPie}
+                            as='div'
+                            >
+                                Dashboard
+                            </Sidebar.Item>
+                        </Link>
+                        )
+                    }
                     <Link to='/dashboard?tab=profile'>
                     <Sidebar.Item 
                             icon={HiUser} 
