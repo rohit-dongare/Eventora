@@ -1,5 +1,5 @@
 import { Button } from 'flowbite-react'
-import React from 'react'
+import {useState, useEffect} from 'react'
 
 const CallToAction = () => {
   return (
@@ -20,7 +20,7 @@ const CallToAction = () => {
                 </a>
             </Button>
         </div>
-        <div className='p-5 flex-1'>
+        <div className='p-5 flex flex-col flex-1 justify-center '>
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1DmLCy9PSJfFqO55mNTYOQLx3x8THsbokkw&s"
              alt="" />
         </div>
