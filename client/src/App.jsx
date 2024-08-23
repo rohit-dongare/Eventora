@@ -6,6 +6,7 @@ import SignUp from './pages/SignUp';
 import Dashboard from './pages/Dashboard';
 import Projects from './pages/Projects';
 import Header from './Components/Header';
+import Search from './pages/Search';
 import Footer from './Components/Footer';
 import PrivateRoute from './Components/PrivateRoute';
 import OnlyAdminPrivateRoute from './Components/OnlyAdminPrivateRoute';
@@ -24,6 +25,7 @@ const App = () => {
         <Route path="/about" element={<About/>} />
         <Route path="/sign-in" element={<SignIn/>} />
         <Route path="/sign-up" element={<SignUp/>} />
+        <Route path="/search" element={<Search/>} />
         <Route element={<PrivateRoute/>}>
          <Route path="/dashboard" element={<Dashboard/>} />
         </Route>

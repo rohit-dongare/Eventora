@@ -6,7 +6,7 @@ const PostCard = ({ post }) => {
     hover:border-2 h-[360px] overflow-hidden rounded-lg sm:w-[360px] transition-all'>
         <Link to={`/post/${post.slug}`}>
             <img src={post.image} alt='post-image'
-                className='h-[260px] w-full object-cover group-hover:h-[200px] 
+                className='h-[260px] w-full group-hover:h-[200px] 
                 transition-all duration-300 z-20'
             />
         </Link>

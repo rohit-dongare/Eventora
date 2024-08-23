@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { TextInput, Button, Navbar, Dropdown, Avatar } from 'flowbite-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { VscChromeClose } from "react-icons/vsc";
 import { useLocation } from 'react-router-dom';
@@ -13,11 +13,22 @@ import { signoutSuccess } from '../redux/user/userSlice';
 
 const Header = () => {
   const [mobileMenu, setMobileMenu] = useState(false);
+  const [searchTerm , setSearchTerm] = useState('');
+
   const location = useLocation();
+  const navigate = useNavigate();
   const path = useLocation().pathname;
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
+
+  useEffect(() => {
+      const urlParams = new URLSearchParams(location.search);
+      const searchTermFromUrl = urlParams.get('searchTerm');
+      if(searchTermFromUrl){
+        setSearchTerm(searchTermFromUrl);
+      }
+  }, [location.search]);
 
   useEffect(() => {
     setMobileMenu(false);
@@ -63,6 +74,15 @@ const handleSignOut = async() => {
   }
 }
 
+//search posts
+const handleSubmit = (e) => {
+  e.preventDefault();
+  const urlParams = new URLSearchParams(location.search);
+  urlParams.set('searchTerm', searchTerm);
+  const searchQuery = urlParams.toString();
+  navigate(`/search?${searchQuery}`);
+}
+
   return (
     <Navbar className={`flex items-center justify-between bg-white dark:bg-[rgba(49,65,110,0.66)] dark:text-gray-400 py-2 px-4 z-[2] relative ${mobileMenu ? '' : 'shadow-md'}`}>
       <Link to='/' className="text-sm sm:text-xl font-semibold dark:text-white">
@@ -71,12 +91,15 @@ const handleSignOut = async() => {
         </span>
         Blog
       </Link>
-      <form className='relative hidden lg:flex items-center mx-4'>
+      <form className='relative hidden lg:flex items-center mx-4'
+      onSubmit={handleSubmit}>
         <TextInput
           type='text'
           placeholder='Search...'
           className='-3 dark:bg-gray-800 dark:text-white'
           style={{ paddingRight: '2.5rem' }}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
         <AiOutlineSearch className="absolute left-48 text-gray-500 dark:text-gray-300 text-2xl" />
       </form>
