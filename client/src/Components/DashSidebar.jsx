@@ -92,6 +92,21 @@ const handleSignOut = async() => {
                     }
                     { currentUser.isAdmin && 
                         (
+                        <Link 
+                        to='/dashboard?tab=participants'
+                        as='div'
+                        >
+                            <Sidebar.Item
+                            active={tab === 'participants'}
+                            icon={HiDocumentText}
+                            >
+                                Participants
+                            </Sidebar.Item>
+                        </Link>
+                        )
+                    }
+                    { currentUser.isAdmin && 
+                        (
                             <>
                                 <Link 
                                 to='/dashboard?tab=users'

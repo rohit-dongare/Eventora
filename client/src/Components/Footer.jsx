@@ -13,9 +13,8 @@ const FooterComponent = () => {
                     <span className='px-2 py-1 bg-gradient-to-r from-teal-400 via-blue-500 to-indigo-600 
                     hover:bg-gradient-to-l
                      rounded-lg text-white'>
-                      IdeaFusion's
+                     Eventora
                     </span>
-                     Blog
                   </Link>
                 </div>
                 <div className='grid grid-cols-2 gap-8 mt-4 sm:grid-cols-3 sm:gap-6'>
@@ -25,7 +24,7 @@ const FooterComponent = () => {
                          <Footer.Link href='/' target='_blank' rel='noopener noreferrer' className='hover:text-sky-500 mt-2'>Home</Footer.Link>
                      </Footer.LinkGroup>
                      <Footer.LinkGroup col>
-                         <Footer.Link href='/about' target='_blank' rel='noopener noreferrer' className='hover:text-sky-500 mt-2'>IdeaFusion's Blog</Footer.Link>
+                         <Footer.Link href='/about' target='_blank' rel='noopener noreferrer' className='hover:text-sky-500 mt-2'>Eventora</Footer.Link>
                      </Footer.LinkGroup>
                     </div>
                     <div>
@@ -53,7 +52,7 @@ const FooterComponent = () => {
                 <Footer.Copyright
                   className='text-gray-900 dark:text-white dark:hover:hover:text-sky-500 hover:text-sky-500'
                   href='#'
-                  by=" IdeaFusion's blog"
+                  by=" Eventora"
                   year={new Date().getFullYear()}
                 />
                 <div className='flex gap-6 sm:mt-0 mt-4 sm:justify-center'>

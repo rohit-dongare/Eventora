@@ -160,3 +160,38 @@ export const getUser = async(req, res, next) => {
         return next(error);
     }
 }
+
+
+//get users participations
+export const getUserParticipations = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+
+        // Find the user and populate their participations
+        const user = await User.findById(userId)
+            .populate({
+                path: "participations.mainEventId",
+                select: "image title slug", // Select only the necessary fields
+            })
+            .lean();
+
+        // Check if the user was found
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Format the participation data
+        const participations = user.participations.map((participation) => ({
+            mainEvent: participation.mainEventId,
+            subEvents: participation.subEvents.map((subEvent) => ({
+                subEventId: subEvent.subEventId,
+                eventName: subEvent.eventName,
+                eventPrice: subEvent.eventPrice,
+            })),
+        }));
+
+        res.status(200).json(participations);
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error });
+    }
+};

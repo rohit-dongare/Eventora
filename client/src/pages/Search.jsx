@@ -155,14 +155,11 @@ const Search = () => {
                     value={sidebarData.category}
                     id='category'
                     >
-                        <option value='uncategorized'>uncategorized</option>
-                        <option value="javascript">Javascript</option>
-                        <option value="reactjs">React.js</option>
-                        <option value="nextjs">Next.js</option>
-                        <option value="nodejs">Node.js</option>
-                        <option value="python">Python</option>
-                        <option value="java">Java</option>
-                        <option value="tailwindcss">Tailwindcss</option>
+                       <option value="uncategorized">Select a category</option>
+                    <option value="hackathon">hackathon</option>
+                    <option value="CSE_dept">CSE_dept</option>
+                    <option value="ECE_dept">ECE_dept</option>
+                    <option value="Civil_dept">Civil_dept</option>
                     </Select>
                 </div>
                 <Button type='submit' outline 
@@ -174,11 +171,11 @@ const Search = () => {
         </div>
         <div className='w-full'>
             <h1 className='text-3xl font-semibold sm:border-b
-             border-gray-500 p-3 mt-5'>Posts Results:</h1>
+             border-gray-500 p-3 mt-5'>Event Results:</h1>
              <div className='p-7 flex flex-wrap gap-4'>
                 {
                     !loading && posts.length === 0 && (<p className='text-3xl 
-                        text-gray-500'>No posts found</p>
+                        text-gray-500'>No events found</p>
                     )
                 }
                 {

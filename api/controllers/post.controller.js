@@ -1,5 +1,90 @@
 import { errorHandler } from '../utils/error.js';
-import  Post  from '../models/post.model.js';
+import Post from '../models/post.model.js';
+import User from '../models/user.model.js'; // Import user model
+import { exec } from "child_process";
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+// Define __filename and __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Generate summary
+export const generateSummary = async (req, res) => {
+    try {
+        const { postId } = req.params;
+        // Fetch the event and populate subEvents and their participants
+        const event = await Post.findById(postId).populate({
+            path: 'subEvents.participants.userId',
+            model: 'User'
+        });
+
+        if (!event) {
+            return res.status(404).send("Event not found");
+        }
+
+        // Prepare participants data for each subEvent
+        const participantsData = await Promise.all(
+            event.subEvents.map(async (subEvent) => {
+                // Get the participants for the current subEvent using the mainEventId
+                const participants = await User.find({ 
+                    'participations.mainEventId': postId, 
+                    'participations.subEvents.subEventId': subEvent._id 
+                }).populate('participations.subEvents.subEventId'); // Populate subEvent details
+
+                return {
+                    eventName: subEvent.eventName,
+                    eventPrice: subEvent.eventPrice,
+                    participants: participants.map(p => ({
+                        username: p.username,
+                        userId: p._id,
+                        profilePicture: p.profilePicture // Optional: Include profile picture if needed
+                    }))
+                };
+            })
+        );
+
+        // Format the summary data
+        const summaryData = {
+            title: event.title,
+            createdAt: event.createdAt,
+            participantsData: participantsData.filter(pd => pd.participants.length > 0) // Filter out sub-events with no participants
+        };
+
+        // Convert summary data to JSON string and pass it to the Python script
+        const summaryDataJSON = JSON.stringify(summaryData);
+        const pythonScriptPath = path.join(__dirname, "../event_summary.py"); // Correct path to the Python script
+
+        const command = `python "${pythonScriptPath}"`;
+        const childProcess = exec(command, { encoding: 'utf8' }, (error) => {
+            if (error) {
+                console.error(`Error executing Python script: ${error.message}`);
+                return res.status(500).send("Error generating summary");
+            }
+        });
+
+        // Send summary data as input to the Python script
+        childProcess.stdin.write(summaryDataJSON);
+        childProcess.stdin.end();
+
+        // Once the PDF is generated, send it for download
+        childProcess.on("close", () => {
+            const pdfPath = path.join(__dirname, "../event_summary.pdf"); // Adjust path if necessary
+            res.download(pdfPath, "event_summary.pdf", (err) => {
+                if (err) {
+                    console.error("Error sending the PDF:", err);
+                    return res.status(500).send("Error downloading the PDF");
+                }
+            });
+        });
+    } catch (error) {
+        console.error("Error generating summary:", error);
+        return res.status(500).send("Server error");
+    }
+};
+
+
+
 
 export const create = async (req, res, next) => {
     //we have added isAdmin property while creating a cookie to the token when the user sign in along with it's id
@@ -85,6 +170,102 @@ export const getposts = async (req, res, next) => {
     }
 };
 
+// In posts.controller.js
+export const getAllPostsForAdmin = async (req, res, next) => {
+    // Ensure only admins can access this route
+    if (!req.user.isAdmin) {
+        return next(errorHandler(403, 'You are not allowed to access this data!'));
+    }
+
+    try {
+        // Find posts where userId matches the admin's ID (i.e., req.user.id)
+        const userId = req.params.userId;
+       // console.log(userId);
+        
+        const posts = await Post.find({ userId: userId })
+            .populate({
+                path: 'subEvents.participants', // Populate participants for sub-events
+                select: 'username email _id'   // Select necessary fields from participants
+            })
+            .exec();
+
+        //  console.log(posts);
+            
+
+        // Format posts to include detailed info for admin
+        const formattedPosts = posts.map(post => ({
+            postId: post._id,
+            postTitle: post.title,
+            postCategory: post.category,
+            postCreationDate: post.createdAt, // Assuming you have a creationDate field
+            postImage: post.image, // Assuming you have an image field
+            subEvents: post.subEvents.length > 0 ? post.subEvents.map(subEvent => ({
+                subEventName: subEvent.eventName || "Unnamed Sub Event",
+                subEventPrice: subEvent.eventPrice,
+                participants: subEvent.participants.length > 0 ? subEvent.participants.map(participant => ({
+                    userId: participant.userId
+                })) : []
+            })) : [] // Return an empty array if no subEvents
+        }));
+
+       // console.log(formattedPosts);
+        
+
+        // Respond with the posts data
+        res.status(200).json({ posts: formattedPosts });
+    } catch (error) {
+        console.error(error);
+        return next(errorHandler(500, 'Error fetching posts for admin'));
+    }
+};
+
+
+//generate post summary
+// export const generateSummary = async (req, res) => {
+//     try {
+//       const { postId } = req.params;
+//       const event = await Post.findById(postId).populate('subEvents.participants.userId');
+//       console.log(event);
+      
+  
+//       if (!event) {
+//         return res.status(404).send("Event not found");
+//       }
+  
+//       // Convert event data to JSON string and pass it to the Python script
+//       const eventData = JSON.stringify(event);
+//       const pythonScriptPath = path.join(__dirname, "event_summary.py");
+//       console.log(pythonScriptPath);
+      
+  
+//       const command = `python ${pythonScriptPath}`;
+//       const childProcess = exec(command, (error, stdout, stderr) => {
+//         if (error) {
+//           console.error(`Error executing Python script: ${error.message}`);
+//           return res.status(500).send("Error generating summary");
+//         }
+//       });
+  
+//       // Send event data as input to the Python script
+//       childProcess.stdin.write(eventData);
+//       childProcess.stdin.end();
+  
+//       // Once the PDF is generated, send it for download
+//       childProcess.on("close", () => {
+//         const pdfPath = path.join(__dirname, "event_summary.pdf");
+//         res.download(pdfPath, "event_summary.pdf", (err) => {
+//           if (err) {
+//             console.error("Error sending the PDF:", err);
+//             return res.status(500).send("Error downloading the PDF");
+//           }
+//         });
+//       });
+//     } catch (error) {
+//       console.error("Error generating summary:", error);
+//       return res.status(500).send("Server error");
+//     }
+//   };
+  
 
 
 //update post
